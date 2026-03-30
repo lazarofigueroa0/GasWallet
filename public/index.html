@@ -19,6 +19,10 @@
       --green-bg: #eaf5ee;
       --red:      #c0280a;
       --red-bg:   #fdecea;
+      --amber:    #b86e00;
+      --amber-bg: #fef3e2;
+      --blue:     #1a4a8a;
+      --blue-bg:  #e8f0fb;
       --mono:     'Share Tech Mono', monospace;
       --sans:     'DM Sans', sans-serif;
       --radius:   10px;
@@ -32,7 +36,7 @@
     .login-box h1 { font-size:22px; font-weight:900; margin-bottom:4px; }
     .login-box p  { font-size:13px; color:var(--ink-dim); margin-bottom:28px; }
     .field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
-    label  { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-dim); }
+    label { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-dim); }
     select, input[type="text"], input[type="number"], input[type="password"] {
       width:100%; background:var(--bg); border:1.5px solid var(--border); border-radius:var(--radius);
       color:var(--ink); font-family:var(--sans); font-size:15px; padding:11px 14px; outline:none; transition:border-color .15s; appearance:none;
@@ -50,7 +54,7 @@
     .btn-ghost:hover { border-color:var(--ink); }
     .btn-sm { padding:8px 16px; width:auto; font-size:13px; }
 
-    /* ── Main ── */
+    /* ── Shell ── */
     #main-screen { display:none; }
     .topbar { background:var(--ink); color:#fff; padding:0 24px; height:52px; display:flex; align-items:center; gap:16px; }
     .topbar-logo { font-size:18px; }
@@ -61,35 +65,80 @@
     .btn-logout { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); border-radius:6px; color:rgba(255,255,255,.7); cursor:pointer; font-size:11px; padding:5px 10px; font-family:var(--sans); transition:all .15s; }
     .btn-logout:hover { background:rgba(255,255,255,.2); color:#fff; }
 
-    /* ── Tab nav ── */
-    .tab-nav { background:var(--surface); border-bottom:1px solid var(--border); display:flex; padding:0 24px; }
-    .tab-btn { background:none; border:none; border-bottom:2px solid transparent; color:var(--ink-dim); cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:700; padding:14px 16px; transition:all .15s; }
+    .tab-nav { background:var(--surface); border-bottom:1px solid var(--border); display:flex; padding:0 24px; overflow-x:auto; }
+    .tab-btn { background:none; border:none; border-bottom:2px solid transparent; color:var(--ink-dim); cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:700; padding:14px 16px; transition:all .15s; white-space:nowrap; }
     .tab-btn.active { border-bottom-color:var(--accent); color:var(--accent); }
     .tab-btn:hover:not(.active) { color:var(--ink); }
 
-    /* ── Pages ── */
-    .page { display:none; max-width:620px; margin:0 auto; padding:20px 16px 60px; }
+    .page { display:none; max-width:680px; margin:0 auto; padding:20px 16px 60px; }
     .page.active { display:block; }
 
-    /* ── Card ── */
+    /* ── Cards ── */
     .card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:14px; }
     .card-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:14px; }
     .input-row { display:flex; gap:10px; }
     .input-row input { flex:1; }
 
-    /* ── Customer list ── */
+    /* ── Summary: stat grid ── */
+    .stat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:14px; }
+    @media(min-width:480px){ .stat-grid { grid-template-columns:repeat(4,1fr); } }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
+    .stat-label { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px; }
+    .stat-value { font-family:var(--mono); font-size:22px; font-weight:700; line-height:1; }
+    .stat-sub   { font-size:11px; color:var(--ink-dim); margin-top:4px; }
+    .stat-green  { color:var(--green); }
+    .stat-red    { color:var(--red); }
+    .stat-amber  { color:var(--amber); }
+    .stat-accent { color:var(--accent); }
+    .stat-blue   { color:var(--blue); }
+
+    /* today strip */
+    .today-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
+    .today-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
+    .today-icon  { font-size:20px; margin-bottom:6px; }
+    .today-val   { font-family:var(--mono); font-size:18px; font-weight:700; }
+    .today-label { font-size:10px; color:var(--ink-dim); margin-top:3px; letter-spacing:1px; text-transform:uppercase; }
+
+    /* ranked list */
+    .ranked-list { display:flex; flex-direction:column; gap:8px; }
+    .ranked-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg); }
+    .ranked-num  { font-family:var(--mono); font-size:13px; color:var(--ink-dim); width:20px; flex-shrink:0; }
+    .ranked-avatar { width:34px; height:34px; border-radius:50%; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+    .ranked-name   { font-size:13px; font-weight:700; flex:1; }
+    .ranked-bal    { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--accent); }
+    .ranked-low    { color:var(--red); }
+
+    /* cashier table */
+    .cashier-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .cashier-table th { text-align:left; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-dim); padding:0 0 10px; border-bottom:1px solid var(--border); }
+    .cashier-table td { padding:10px 0; border-bottom:1px solid var(--border); }
+    .cashier-table tr:last-child td { border:none; }
+    .cashier-table .num { font-family:var(--mono); }
+    .cashier-table .green { color:var(--green); }
+    .cashier-table .red   { color:var(--red); }
+
+    /* recent tx */
+    .recent-list { display:flex; flex-direction:column; gap:8px; }
+    .recent-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg); }
+    .recent-type { font-size:12px; font-weight:700; }
+    .recent-meta { font-size:11px; color:var(--ink-dim); margin-top:2px; }
+    .recent-amt  { margin-left:auto; font-family:var(--mono); font-size:14px; font-weight:700; }
+    .recent-item.topup   .recent-amt { color:var(--green); }
+    .recent-item.topup   .recent-amt::before { content:'+'; }
+    .recent-item.payment .recent-amt { color:var(--red); }
+    .recent-item.payment .recent-amt::before { content:'-'; }
+
+    .refresh-btn { font-size:12px; color:var(--ink-dim); background:none; border:1px solid var(--border); border-radius:6px; padding:5px 12px; cursor:pointer; font-family:var(--sans); float:right; margin-top:-2px; }
+    .refresh-btn:hover { color:var(--ink); border-color:var(--ink); }
+    .empty-state { font-size:13px; color:var(--ink-dim); padding:12px 0; text-align:center; }
+
+    /* ── Customers tab ── */
     .search-wrap { position:relative; margin-bottom:16px; }
     .search-wrap input { width:100%; padding-left:38px; }
     .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--ink-dim); font-size:15px; pointer-events:none; }
     .customer-count { font-size:12px; color:var(--ink-dim); margin-bottom:10px; }
-
     .client-list { display:flex; flex-direction:column; gap:8px; }
-    .client-row {
-      display:flex; align-items:center; gap:12px;
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:var(--radius); padding:12px 14px;
-      cursor:pointer; transition:all .15s;
-    }
+    .client-row { display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; cursor:pointer; transition:all .15s; }
     .client-row:hover { border-color:var(--accent); background:#fffaf8; }
     .client-avatar { width:38px; height:38px; border-radius:50%; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
     .client-name { font-size:14px; font-weight:700; }
@@ -101,8 +150,8 @@
     .bal-low  { color:var(--red) !important; }
     .no-results { text-align:center; padding:40px 0; color:var(--ink-dim); font-size:14px; }
 
-    /* ── Transaction page ── */
-    .customer-row { display:flex; align-items:center; gap:14px; padding:14px; background:var(--bg); border-radius:var(--radius); margin-bottom:4px; }
+    /* ── Transaction tab ── */
+    .customer-row-panel { display:flex; align-items:center; gap:14px; padding:14px; background:var(--bg); border-radius:var(--radius); margin-bottom:4px; }
     .avatar { width:42px; height:42px; border-radius:50%; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; flex-shrink:0; }
     .cust-name { font-size:16px; font-weight:700; }
     .cust-id   { font-family:var(--mono); font-size:10px; color:var(--ink-dim); margin-top:2px; }
@@ -112,23 +161,21 @@
     #customer-panel { display:none; }
     #action-panel   { display:none; }
     #tx-panel       { display:none; }
-
     .chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
     .chip { font-family:var(--mono); font-size:12px; padding:5px 12px; border-radius:20px; cursor:pointer; border:1.5px solid var(--border); color:var(--ink-dim); background:var(--bg); transition:all .15s; }
     .chip:hover { border-color:var(--accent); color:var(--accent); background:#fff; }
     .action-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
     .btn-topup-action { background:var(--green-bg); border:1.5px solid #9dd4b4; color:var(--green); border-radius:var(--radius); padding:14px; font-family:var(--sans); font-weight:700; font-size:14px; cursor:pointer; transition:all .15s; }
     .btn-topup-action:hover { background:#d6efdf; border-color:var(--green); }
-    .btn-pay-action   { background:var(--red-bg);   border:1.5px solid #f4b8b0; color:var(--red);   border-radius:var(--radius); padding:14px; font-family:var(--sans); font-weight:700; font-size:14px; cursor:pointer; transition:all .15s; }
-    .btn-pay-action:hover   { background:#fce0dc; border-color:var(--red); }
+    .btn-pay-action { background:var(--red-bg); border:1.5px solid #f4b8b0; color:var(--red); border-radius:var(--radius); padding:14px; font-family:var(--sans); font-weight:700; font-size:14px; cursor:pointer; transition:all .15s; }
+    .btn-pay-action:hover { background:#fce0dc; border-color:var(--red); }
     .btn-topup-action:active, .btn-pay-action:active { transform:scale(.97); }
-
     .tx-list { display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; }
     .tx-list::-webkit-scrollbar { width:4px; }
     .tx-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
     .tx-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg); }
     .tx-icon { font-size:15px; flex-shrink:0; }
-    .tx-type { font-size:13px; font-weight:700; text-transform:capitalize; }
+    .tx-type { font-size:13px; font-weight:700; }
     .tx-meta { font-size:11px; color:var(--ink-dim); margin-top:2px; }
     .tx-amount { margin-left:auto; font-family:var(--mono); font-size:14px; font-weight:700; }
     .tx-item.topup   .tx-amount { color:var(--green); }
@@ -137,7 +184,6 @@
     .tx-item.payment .tx-amount::before { content:'-'; }
     .tx-print-btn { font-size:11px; color:var(--ink-dim); cursor:pointer; background:none; border:1px solid var(--border); border-radius:5px; padding:3px 8px; font-family:var(--sans); transition:all .15s; flex-shrink:0; }
     .tx-print-btn:hover { border-color:var(--ink); color:var(--ink); }
-
     .divider { display:flex; align-items:center; gap:10px; color:var(--ink-dim); font-size:11px; letter-spacing:1px; text-transform:uppercase; margin:4px 0; }
     .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
 
@@ -154,7 +200,7 @@
     .confirm-row .val { font-weight:700; font-family:var(--mono); }
     .confirm-row .val.big { font-size:22px; color:var(--green); }
     .confirm-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
-    .receipt-paper { background:#fff; border:1px dashed var(--border); border-radius:8px; padding:20px; font-family:var(--mono); font-size:13px; line-height:1.8; margin-bottom:18px; white-space:pre; }
+    .receipt-paper { background:#fff; border:1px dashed var(--border); border-radius:8px; padding:20px; font-family:var(--mono); font-size:13px; line-height:1.8; margin-bottom:18px; white-space:pre; overflow-x:auto; }
 
     /* ── Toast ── */
     #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px); border-radius:10px; padding:13px 22px; font-size:14px; font-weight:600; min-width:240px; text-align:center; transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s; opacity:0; pointer-events:none; z-index:200; }
@@ -201,13 +247,116 @@
   </div>
 
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('customers')">Customers</button>
-    <button class="tab-btn" onclick="switchTab('transaction')">Transaction</button>
-    <button class="tab-btn" onclick="switchTab('register')">New Customer</button>
+    <button class="tab-btn active" onclick="switchTab('summary')">📊 Summary</button>
+    <button class="tab-btn" onclick="switchTab('customers')">👥 Customers</button>
+    <button class="tab-btn" onclick="switchTab('transaction')">💳 Transaction</button>
+    <button class="tab-btn" onclick="switchTab('register')">➕ New Customer</button>
   </div>
 
-  <!-- TAB: Customers list -->
-  <div class="page active" id="page-customers">
+  <!-- ══════════════════════════════════════════════════════
+       SUMMARY TAB
+  ══════════════════════════════════════════════════════ -->
+  <div class="page active" id="page-summary">
+
+    <!-- Key metrics -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <span style="font-size:11px;color:var(--ink-dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">System Overview</span>
+      <button class="refresh-btn" onclick="loadSummary()">↻ Refresh</button>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Cash in System</div>
+        <div class="stat-value stat-accent" id="s-total-cash">—</div>
+        <div class="stat-sub">Total customer balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Customers</div>
+        <div class="stat-value stat-green" id="s-active">—</div>
+        <div class="stat-sub" id="s-active-sub">with balance > $0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Low Balance</div>
+        <div class="stat-value stat-amber" id="s-low">—</div>
+        <div class="stat-sub">under $10</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Zero Balance</div>
+        <div class="stat-value stat-red" id="s-inactive">—</div>
+        <div class="stat-sub">no funds loaded</div>
+      </div>
+    </div>
+
+    <!-- Today -->
+    <div class="card">
+      <div class="card-label">Today's Activity</div>
+      <div class="today-grid">
+        <div class="today-card">
+          <div class="today-icon">⬆</div>
+          <div class="today-val stat-green" id="s-topups-today">—</div>
+          <div class="today-label">Top-Ups</div>
+        </div>
+        <div class="today-card">
+          <div class="today-icon">⬇</div>
+          <div class="today-val stat-red" id="s-payments-today">—</div>
+          <div class="today-label">Charged</div>
+        </div>
+        <div class="today-card">
+          <div class="today-icon">🔢</div>
+          <div class="today-val stat-blue" id="s-tx-count">—</div>
+          <div class="today-label">Transactions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top customers -->
+    <div class="card">
+      <div class="card-label">Top Customers by Balance</div>
+      <div class="ranked-list" id="s-top-customers">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Low balance warnings -->
+    <div class="card">
+      <div class="card-label">⚠ Low Balance Alerts</div>
+      <div class="ranked-list" id="s-low-customers">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Cashier activity -->
+    <div class="card">
+      <div class="card-label">Cashier Activity Today</div>
+      <table class="cashier-table">
+        <thead>
+          <tr>
+            <th>Cashier</th>
+            <th>Transactions</th>
+            <th>Top-Ups</th>
+            <th>Charges</th>
+          </tr>
+        </thead>
+        <tbody id="s-cashier-table">
+          <tr><td colspan="4" class="empty-state">No activity today yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent transactions -->
+    <div class="card">
+      <div class="card-label">Recent Transactions</div>
+      <div class="recent-list" id="s-recent-tx">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       CUSTOMERS TAB
+  ══════════════════════════════════════════════════════ -->
+  <div class="page" id="page-customers">
     <div class="card">
       <div class="card-label">All customers</div>
       <div class="search-wrap">
@@ -221,21 +370,21 @@
     </div>
   </div>
 
-  <!-- TAB: Transaction -->
+  <!-- ══════════════════════════════════════════════════════
+       TRANSACTION TAB
+  ══════════════════════════════════════════════════════ -->
   <div class="page" id="page-transaction">
-
     <div class="card">
       <div class="card-label">Look up customer</div>
       <div class="input-row">
         <input type="text" id="userId" placeholder="Name or Customer ID…" autocomplete="off" oninput="liveSearch()"/>
       </div>
-      <!-- inline search results -->
       <div id="inline-results" style="margin-top:8px;display:none;"></div>
     </div>
 
     <div class="card" id="customer-panel">
       <div class="card-label">Customer</div>
-      <div class="customer-row">
+      <div class="customer-row-panel">
         <div class="avatar" id="cust-avatar">?</div>
         <div>
           <div class="cust-name" id="cust-name">—</div>
@@ -268,10 +417,11 @@
       <div class="card-label">Transaction history</div>
       <div class="tx-list" id="tx-list"></div>
     </div>
-
   </div>
 
-  <!-- TAB: New Customer -->
+  <!-- ══════════════════════════════════════════════════════
+       NEW CUSTOMER TAB
+  ══════════════════════════════════════════════════════ -->
   <div class="page" id="page-register">
     <div class="card">
       <div class="card-label">Register new customer</div>
@@ -283,7 +433,7 @@
     </div>
   </div>
 
-</div>
+</div><!-- /main-screen -->
 
 <!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirm-modal">
@@ -335,19 +485,20 @@
   }
   function openModal(id)  { $(id).classList.add("open"); }
   function closeModal(id) { $(id).classList.remove("open"); }
-  function setAmt(v) { $("amount").value = v; $("amount").focus(); }
+  function setAmt(v)      { $("amount").value = v; $("amount").focus(); }
 
-  // ── Tab switching ────────────────────────────────────────────────
+  // ── Tabs ─────────────────────────────────────────────────────────
   function switchTab(name) {
-    document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    const tabs = ["customers","transaction","register"];
+    const tabs = ["summary","customers","transaction","register"];
     document.querySelectorAll(".tab-btn")[tabs.indexOf(name)].classList.add("active");
     $("page-" + name).classList.add("active");
+    if (name === "summary")   loadSummary();
     if (name === "customers") loadAllCustomers();
   }
 
-  // ── Login ────────────────────────────────────────────────────────
+  // ── Login ─────────────────────────────────────────────────────────
   async function loadCashiers() {
     try {
       const res  = await fetch(`${API}/cashiers`);
@@ -373,10 +524,10 @@
       if (!res.ok) { showLoginError(data.error || "Login failed"); return; }
       cashier = data;
       $("cashier-name-display").textContent = cashier.name;
-      $("login-screen").style.display  = "none";
-      $("main-screen").style.display   = "block";
+      $("login-screen").style.display = "none";
+      $("main-screen").style.display  = "block";
       $("login-pin").value = "";
-      loadAllCustomers();
+      loadSummary();
     } catch { showLoginError("Cannot connect to API. Is the backend running?"); }
   }
 
@@ -392,28 +543,99 @@
     $("tx-panel").style.display       = "none";
   }
 
-  // ── Customer list ────────────────────────────────────────────────
+  // ── Summary ───────────────────────────────────────────────────────
+  async function loadSummary() {
+    try {
+      const res  = await fetch(`${API}/summary`);
+      const d    = await res.json();
+
+      // Key stats
+      $("s-total-cash").textContent  = fmt(d.totalCash);
+      $("s-active").textContent      = d.activeUsers;
+      $("s-active-sub").textContent  = `of ${d.totalUsers} total customers`;
+      $("s-low").textContent         = d.lowBalance;
+      $("s-inactive").textContent    = d.inactiveUsers;
+
+      // Today
+      $("s-topups-today").textContent   = fmt(d.topupsToday);
+      $("s-payments-today").textContent = fmt(d.paymentsToday);
+      $("s-tx-count").textContent       = d.txCountToday;
+
+      // Top customers
+      const topEl = $("s-top-customers");
+      if (!d.topCustomers.length) {
+        topEl.innerHTML = `<div class="empty-state">No customers with balance yet.</div>`;
+      } else {
+        topEl.innerHTML = d.topCustomers.map((u,i) => `
+          <div class="ranked-item" style="cursor:pointer" onclick="selectCustomerFromList('${u.id}')">
+            <span class="ranked-num">#${i+1}</span>
+            <div class="ranked-avatar">${u.name.charAt(0).toUpperCase()}</div>
+            <span class="ranked-name">${u.name}</span>
+            <span class="ranked-bal">${fmt(u.balance)}</span>
+          </div>`).join("");
+      }
+
+      // Low balance
+      const lowEl = $("s-low-customers");
+      if (!d.lowBalanceCustomers.length) {
+        lowEl.innerHTML = `<div class="empty-state">No customers with low balance. ✓</div>`;
+      } else {
+        lowEl.innerHTML = d.lowBalanceCustomers.map(u => `
+          <div class="ranked-item" style="cursor:pointer" onclick="selectCustomerFromList('${u.id}')">
+            <div class="ranked-avatar" style="background:var(--red);">${u.name.charAt(0).toUpperCase()}</div>
+            <span class="ranked-name">${u.name}</span>
+            <span class="ranked-bal ranked-low">${fmt(u.balance)}</span>
+          </div>`).join("");
+      }
+
+      // Cashier table
+      const ctEl = $("s-cashier-table");
+      if (!d.cashierActivity.length) {
+        ctEl.innerHTML = `<tr><td colspan="4" class="empty-state">No activity today yet.</td></tr>`;
+      } else {
+        ctEl.innerHTML = d.cashierActivity.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td class="num">${c.txCount}</td>
+            <td class="num green">${fmt(c.topups)}</td>
+            <td class="num red">${fmt(c.payments)}</td>
+          </tr>`).join("");
+      }
+
+      // Recent transactions
+      const rtEl = $("s-recent-tx");
+      if (!d.recentTx.length) {
+        rtEl.innerHTML = `<div class="empty-state">No transactions yet.</div>`;
+      } else {
+        rtEl.innerHTML = d.recentTx.map(tx => `
+          <div class="recent-item ${tx.type}">
+            <span style="font-size:14px;">${tx.type==="topup"?"⬆":"⬇"}</span>
+            <div style="flex:1;">
+              <div class="recent-type">${tx.user_name}</div>
+              <div class="recent-meta">${new Date(tx.timestamp).toLocaleString()} · ${tx.cashier_name}</div>
+            </div>
+            <span class="recent-amt">${fmt(tx.amount)}</span>
+          </div>`).join("");
+      }
+    } catch { toast("Could not load summary","error"); }
+  }
+
+  // ── Customers list ────────────────────────────────────────────────
   async function loadAllCustomers(search="") {
     const url = search ? `${API}/users?search=${encodeURIComponent(search)}` : `${API}/users`;
     try {
       const res   = await fetch(url);
       const users = await res.json();
       renderClientList(users);
-    } catch {
-      $("client-list").innerHTML = `<div class="no-results">Cannot reach server.</div>`;
-    }
+    } catch { $("client-list").innerHTML = `<div class="no-results">Cannot reach server.</div>`; }
   }
 
   function renderClientList(users) {
-    const count = $("customer-count");
-    count.textContent = users.length === 0 ? "No customers found" : `${users.length} customer${users.length !== 1 ? "s" : ""}`;
+    $("customer-count").textContent = users.length === 0 ? "No customers found" : `${users.length} customer${users.length!==1?"s":""}`;
     const list = $("client-list");
-    if (!users.length) {
-      list.innerHTML = `<div class="no-results">No customers found.</div>`;
-      return;
-    }
+    if (!users.length) { list.innerHTML = `<div class="no-results">No customers found.</div>`; return; }
     list.innerHTML = users.map(u => {
-      const balClass = u.balance === 0 ? "bal-zero" : u.balance < 10 ? "bal-low" : "";
+      const bc = u.balance===0?"bal-zero":u.balance<10?"bal-low":"";
       return `
         <div class="client-row" onclick="selectCustomerFromList('${u.id}')">
           <div class="client-avatar">${u.name.charAt(0).toUpperCase()}</div>
@@ -423,7 +645,7 @@
           </div>
           <div class="client-bal">
             <div class="client-bal-label">Balance</div>
-            <div class="client-bal-num ${balClass}">${fmt(u.balance)}</div>
+            <div class="client-bal-num ${bc}">${fmt(u.balance)}</div>
           </div>
         </div>`;
     }).join("");
@@ -443,7 +665,7 @@
     $("userId").value = data.name;
   }
 
-  // ── Live search in transaction tab ──────────────────────────────
+  // ── Live search in transaction tab ────────────────────────────────
   async function liveSearch() {
     const q = $("userId").value.trim();
     const box = $("inline-results");
@@ -455,15 +677,14 @@
       if (!users.length) { box.style.display="none"; return; }
       box.style.display = "block";
       box.innerHTML = users.slice(0,5).map(u => `
-        <div onclick="pickUser('${u.id}')" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--bg);margin-bottom:6px;transition:background .12s;" onmouseover="this.style.background='#fffaf8'" onmouseout="this.style.background='var(--bg)'">
+        <div onclick="pickUser('${u.id}')" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--bg);margin-bottom:6px;">
           <div style="width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">${u.name.charAt(0).toUpperCase()}</div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:700;">${u.name}</div>
             <div style="font-family:var(--mono);font-size:10px;color:var(--ink-dim);">${u.id.substring(0,20)}…</div>
           </div>
           <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);">${fmt(u.balance)}</div>
-        </div>
-      `).join("");
+        </div>`).join("");
     }, 200);
   }
 
@@ -476,7 +697,7 @@
     showCustomer(data);
   }
 
-  // ── Show customer ────────────────────────────────────────────────
+  // ── Show customer in transaction tab ──────────────────────────────
   function showCustomer(user) {
     customer = user;
     $("cust-name").textContent    = user.name;
@@ -489,17 +710,14 @@
     loadTransactions();
   }
 
-  function refreshBalance(newBalance) {
-    customer.balance = newBalance;
-    $("balance-display").textContent = fmt(newBalance);
-  }
+  function refreshBalance(newBalance) { customer.balance = newBalance; $("balance-display").textContent = fmt(newBalance); }
 
   async function loadTransactions() {
     if (!customer) return;
     const res = await fetch(`${API}/transactions/${customer.id}`);
     const txs = await res.json();
     const list = $("tx-list");
-    if (!txs.length) { list.innerHTML = `<div style="color:var(--ink-dim);font-size:13px;padding:8px 0;">No transactions yet.</div>`; return; }
+    if (!txs.length) { list.innerHTML=`<div style="color:var(--ink-dim);font-size:13px;padding:8px 0;">No transactions yet.</div>`; return; }
     list.innerHTML = txs.map(tx => `
       <div class="tx-item ${tx.type}">
         <div class="tx-icon">${tx.type==="topup"?"⬆":"⬇"}</div>
@@ -512,10 +730,10 @@
       </div>`).join("");
   }
 
-  // ── Top-up ───────────────────────────────────────────────────────
+  // ── Top-Up ────────────────────────────────────────────────────────
   async function initiateTopup() {
     const amount = parseFloat($("amount").value);
-    if (!amount || amount<=0) { toast("Enter a valid amount","error"); return; }
+    if (!amount||amount<=0) { toast("Enter a valid amount","error"); return; }
     try {
       const res  = await fetch(`${API}/topup/preview`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:customer.id,amount,cashierId:cashier.id})});
       const data = await res.json();
@@ -544,10 +762,10 @@
     } catch { toast("API error","error"); }
   }
 
-  // ── Pay ──────────────────────────────────────────────────────────
+  // ── Pay ───────────────────────────────────────────────────────────
   async function initiatePay() {
     const amount = parseFloat($("amount").value);
-    if (!amount || amount<=0) { toast("Enter a valid amount","error"); return; }
+    if (!amount||amount<=0) { toast("Enter a valid amount","error"); return; }
     try {
       const res  = await fetch(`${API}/pay`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:customer.id,amount,cashierId:cashier.id})});
       const data = await res.json();
@@ -560,13 +778,13 @@
     } catch { toast("API error","error"); }
   }
 
-  // ── Receipt ──────────────────────────────────────────────────────
+  // ── Receipt ───────────────────────────────────────────────────────
   async function showReceiptById(txId) {
     try {
       const res  = await fetch(`${API}/receipt/${txId}`);
       const data = await res.json();
       if (!res.ok) return;
-      const line = "─".repeat(32);
+      const line   = "─".repeat(32);
       const center = (s,w=32) => " ".repeat(Math.max(0,Math.floor((w-s.length)/2)))+s;
       const text = [
         center(data.station), center("GasWallet POS"), line,
@@ -587,7 +805,7 @@
 
   function printReceipt() { window.print(); }
 
-  // ── New customer ─────────────────────────────────────────────────
+  // ── New customer ──────────────────────────────────────────────────
   async function createCustomer() {
     const name = $("newName").value.trim();
     if (!name) { toast("Enter a name","error"); return; }
@@ -608,7 +826,7 @@
     } catch { toast("API error","error"); }
   }
 
-  // ── Keyboard ─────────────────────────────────────────────────────
+  // ── Keyboard ──────────────────────────────────────────────────────
   $("login-pin").addEventListener("keydown", e => e.key==="Enter" && login());
   $("newName").addEventListener("keydown",   e => e.key==="Enter" && createCustomer());
   $("amount").addEventListener("keydown",    e => e.key==="Enter" && initiatePay());
@@ -617,3 +835,4 @@
 </script>
 </body>
 </html>
+
