@@ -538,25 +538,67 @@
       const res  = await fetch(`${API}/cashiers/login`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name,pin}) });
       const data = await res.json();
       if (!res.ok) { showLoginError(data.error || "Login failed"); return; }
-      cashier = data;
+      cashier = data; // { id, name, role }
       $("cashier-name-display").textContent = cashier.name;
+
+      // Show role badge in topbar
+      const roleBadge = cashier.role === "manager"
+        ? `<span style="font-size:10px;background:#1a4a8a;color:#b8d4f8;border-radius:4px;padding:2px 7px;margin-left:8px;font-weight:700;letter-spacing:.5px;">MANAGER</span>`
+        : `<span style="font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);border-radius:4px;padding:2px 7px;margin-left:8px;letter-spacing:.5px;">CASHIER</span>`;
+      $("cashier-name-display").insertAdjacentHTML("afterend", roleBadge);
+
       $("login-screen").style.display = "none";
       $("main-screen").style.display  = "block";
       $("login-pin").value = "";
-      loadSummary();
+
+      // Show tabs based on role
+      applyRoleTabs();
+
+      if (cashier.role === "manager") {
+        loadSummary();
+      } else {
+        switchTab("customers");
+      }
     } catch { showLoginError("Cannot connect to API. Is the backend running?"); }
+  }
+
+  function applyRoleTabs() {
+    const isManager = cashier.role === "manager";
+    // Tab buttons
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    // summary, customers, transaction, register
+    tabBtns[0].style.display = isManager ? "block" : "none";   // Summary — manager only
+    tabBtns[1].style.display = "block";                         // Customers — both
+    tabBtns[2].style.display = isManager ? "none" : "block";    // Transaction — cashier only
+    tabBtns[3].style.display = isManager ? "none" : "block";    // New Customer — cashier only
+
+    // Default active tab
+    if (isManager) {
+      switchTab("summary");
+    } else {
+      switchTab("customers");
+    }
   }
 
   function showLoginError(msg) { const el=$("login-error"); el.textContent=msg; el.style.display="block"; }
 
   function logout() {
     cashier = customer = pendingTx = null;
-    $("login-screen").style.display = "block";
+    $("login-screen").style.display = "none";
     $("main-screen").style.display  = "none";
+    $("login-screen").style.display = "flex";
     $("login-pin").value = "";
+    $("userId").value = "";
+    $("amount").value = "";
     $("customer-panel").style.display = "none";
     $("action-panel").style.display   = "none";
     $("tx-panel").style.display       = "none";
+    $("max-hint").style.display       = "none";
+    // Remove role badge if present
+    const badge = $("cashier-name-display").nextElementSibling;
+    if (badge && badge.tagName === "SPAN") badge.remove();
+    // Reset tab visibility
+    document.querySelectorAll(".tab-btn").forEach(b => b.style.display = "block");
   }
 
   // ── Summary ───────────────────────────────────────────────────────
@@ -870,5 +912,4 @@
 </script>
 </body>
 </html>
-
 
