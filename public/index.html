@@ -181,7 +181,12 @@
     .tx-item.topup   .tx-amount { color:var(--green); }
     .tx-item.topup   .tx-amount::before { content:'+'; }
     .tx-item.payment .tx-amount { color:var(--red); }
-    .tx-item.payment .tx-amount::before { content:'-'; }
+    .tx-item.payment  .tx-amount::before { content:"-"; }
+    .tx-item.cashback .tx-amount { color:var(--green); }
+    .tx-item.cashback .tx-amount::before { content:"+"; }
+    .cashback-badge { display:inline-block; background:var(--green-bg); border:1px solid #9dd4b4; color:var(--green); border-radius:6px; font-size:11px; font-weight:700; padding:3px 8px; }
+    .max-hint { font-size:12px; color:var(--ink-dim); margin-bottom:10px; padding:8px 12px; background:var(--bg); border-radius:var(--radius); border:1px solid var(--border); }
+    .max-hint span { font-family:var(--mono); font-weight:700; color:var(--accent); }
     .tx-print-btn { font-size:11px; color:var(--ink-dim); cursor:pointer; background:none; border:1px solid var(--border); border-radius:5px; padding:3px 8px; font-family:var(--sans); transition:all .15s; flex-shrink:0; }
     .tx-print-btn:hover { border-color:var(--ink); color:var(--ink); }
     .divider { display:flex; align-items:center; gap:10px; color:var(--ink-dim); font-size:11px; letter-spacing:1px; text-transform:uppercase; margin:4px 0; }
@@ -264,7 +269,7 @@
       <button class="refresh-btn" onclick="loadSummary()">↻ Refresh</button>
     </div>
 
-    <div class="stat-grid">
+    <div class="stat-grid" style="grid-template-columns:repeat(2,1fr);">
       <div class="stat-card">
         <div class="stat-label">Cash in System</div>
         <div class="stat-value stat-accent" id="s-total-cash">—</div>
@@ -285,12 +290,17 @@
         <div class="stat-value stat-red" id="s-inactive">—</div>
         <div class="stat-sub">no funds loaded</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Cashback Given</div>
+        <div class="stat-value stat-green" id="s-cashback-ever">—</div>
+        <div class="stat-sub">all time · 2% per payment</div>
+      </div>
     </div>
 
     <!-- Today -->
     <div class="card">
       <div class="card-label">Today's Activity</div>
-      <div class="today-grid">
+      <div class="today-grid" style="grid-template-columns:repeat(2,1fr);">
         <div class="today-card">
           <div class="today-icon">⬆</div>
           <div class="today-val stat-green" id="s-topups-today">—</div>
@@ -300,6 +310,11 @@
           <div class="today-icon">⬇</div>
           <div class="today-val stat-red" id="s-payments-today">—</div>
           <div class="today-label">Charged</div>
+        </div>
+        <div class="today-card">
+          <div class="today-icon">🎁</div>
+          <div class="today-val stat-green" id="s-cashback-today">—</div>
+          <div class="today-label">Cashback Given</div>
         </div>
         <div class="today-card">
           <div class="today-icon">🔢</div>
@@ -399,6 +414,7 @@
 
     <div class="card" id="action-panel">
       <div class="card-label">Amount</div>
+      <div class="max-hint" id="max-hint" style="display:none;">Max charge: <span id="max-amount">$0.00</span> &nbsp;·&nbsp; 2% cashback (max $1.00) will be applied</div>
       <div class="chips">
         <span class="chip" onclick="setAmt(5)">$5</span>
         <span class="chip" onclick="setAmt(10)">$10</span>
@@ -555,11 +571,13 @@
       $("s-active-sub").textContent  = `of ${d.totalUsers} total customers`;
       $("s-low").textContent         = d.lowBalance;
       $("s-inactive").textContent    = d.inactiveUsers;
+      $("s-cashback-ever").textContent = fmt(d.totalCashbackEver);
 
       // Today
-      $("s-topups-today").textContent   = fmt(d.topupsToday);
-      $("s-payments-today").textContent = fmt(d.paymentsToday);
-      $("s-tx-count").textContent       = d.txCountToday;
+      $("s-topups-today").textContent    = fmt(d.topupsToday);
+      $("s-payments-today").textContent  = fmt(d.paymentsToday);
+      $("s-cashback-today").textContent  = fmt(d.cashbackToday);
+      $("s-tx-count").textContent        = d.txCountToday;
 
       // Top customers
       const topEl = $("s-top-customers");
@@ -707,10 +725,16 @@
     $("customer-panel").style.display = "block";
     $("action-panel").style.display   = "block";
     $("tx-panel").style.display       = "block";
+    $("max-hint").style.display = "block";
+    $("max-amount").textContent = fmt(user.balance);
     loadTransactions();
   }
 
-  function refreshBalance(newBalance) { customer.balance = newBalance; $("balance-display").textContent = fmt(newBalance); }
+  function refreshBalance(newBalance) {
+    customer.balance = newBalance;
+    $("balance-display").textContent = fmt(newBalance);
+    $("max-amount").textContent = fmt(newBalance);
+  }
 
   async function loadTransactions() {
     if (!customer) return;
@@ -718,16 +742,20 @@
     const txs = await res.json();
     const list = $("tx-list");
     if (!txs.length) { list.innerHTML=`<div style="color:var(--ink-dim);font-size:13px;padding:8px 0;">No transactions yet.</div>`; return; }
-    list.innerHTML = txs.map(tx => `
+    list.innerHTML = txs.map(tx => {
+      const label = tx.type==="topup" ? "Top-Up" : tx.type==="cashback" ? "Cashback" : "Payment";
+      const icon  = tx.type==="payment" ? "⬇" : "⬆";
+      return `
       <div class="tx-item ${tx.type}">
-        <div class="tx-icon">${tx.type==="topup"?"⬆":"⬇"}</div>
+        <div class="tx-icon">${icon}</div>
         <div style="flex:1;min-width:0;">
-          <div class="tx-type">${tx.type==="topup"?"Top-Up":"Payment"}</div>
+          <div class="tx-type">${label}</div>
           <div class="tx-meta">${new Date(tx.timestamp).toLocaleString()} · ${tx.cashier_name}</div>
         </div>
         <div class="tx-amount">${fmt(tx.amount)}</div>
-        <button class="tx-print-btn" onclick="showReceiptById(${tx.id})">🖨</button>
-      </div>`).join("");
+        ${tx.type !== "cashback" ? `<button class="tx-print-btn" onclick="showReceiptById(${tx.id})">🖨</button>` : ""}
+      </div>`;
+    }).join("");
   }
 
   // ── Top-Up ────────────────────────────────────────────────────────
@@ -766,13 +794,16 @@
   async function initiatePay() {
     const amount = parseFloat($("amount").value);
     if (!amount||amount<=0) { toast("Enter a valid amount","error"); return; }
+    if (amount > customer.balance) {
+      toast(`Insufficient balance — max charge is ${fmt(customer.balance)}`,"error"); return;
+    }
     try {
       const res  = await fetch(`${API}/pay`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:customer.id,amount,cashierId:cashier.id})});
       const data = await res.json();
       if (!res.ok) { toast(data.shortfall?`Insufficient — short ${fmt(data.shortfall)}`:data.error,"error"); return; }
       refreshBalance(data.newBalance);
       $("amount").value = "";
-      toast(`✓ Payment of ${fmt(amount)} approved`,"success");
+      toast(`✓ Charged ${fmt(amount)} · Cashback +${fmt(data.cashback)}`, "success");
       await showReceiptById(data.transactionId);
       loadTransactions();
     } catch { toast("API error","error"); }
@@ -786,6 +817,9 @@
       if (!res.ok) return;
       const line   = "─".repeat(32);
       const center = (s,w=32) => " ".repeat(Math.max(0,Math.floor((w-s.length)/2)))+s;
+      const cashbackLine = data.cashback > 0
+        ? [`Cashback:  +${fmt(data.cashback)}${data.cashback === 1.00 ? " (max)" : "  (2%)"}`, line]
+        : [];
       const text = [
         center(data.station), center("GasWallet POS"), line,
         `Receipt #: ${String(data.receiptNumber).padStart(6,"0")}`,
@@ -793,9 +827,10 @@
         `Cashier:   ${data.cashier.name}`, line,
         `Customer:  ${data.customer.name}`, line,
         `Type:      ${data.type==="topup"?"TOP-UP":"PAYMENT"}`,
-        `Amount:    ${fmt(data.amount)}`, line,
+        `Amount:    ${fmt(data.amount)}`,
+        ...cashbackLine,
         `Balance:   ${fmt(data.currentBalance)}`, line,
-        center("Thank you!"),
+        data.cashback > 0 ? center("Thank you! Cashback applied ✓") : center("Thank you!"),
       ].join("\n");
       $("receipt-content").textContent = text;
       $("print-area").textContent = text;
@@ -835,4 +870,5 @@
 </script>
 </body>
 </html>
+
 
